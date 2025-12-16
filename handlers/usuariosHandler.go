@@ -53,7 +53,7 @@ func Ingreso(c echo.Context) error {
 			return c.JSON(200, echo.Map{"mensaje": "Ingreso"})
 		}
 	} else {
-		return c.JSON(400, echo.Map{"mensaje": "Usuario no encontrado"})
+		return c.JSON(404, echo.Map{"mensaje": "Usuario no encontrado"})
 	}
 
 }
