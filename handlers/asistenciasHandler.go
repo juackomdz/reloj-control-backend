@@ -18,7 +18,7 @@ func CheckIn(c echo.Context) error {
 		return c.JSON(500, echo.Map{"mensaje": "Error al registrar campos"})
 	}
 
-	existe := database.Conectar().Last(&models.RegistroAsistencias{}, "hora_salida is null")
+	existe := database.Conectar().Where(&models.RegistroAsistencias{UsuariosID: registro.UsuariosID}).Last(&models.RegistroAsistencias{}, "hora_salida is null")
 
 	if existe.RowsAffected == 0 {
 		datos := models.RegistroAsistencias{UsuariosID: registro.UsuariosID, HoraEntrada: &ahora}
