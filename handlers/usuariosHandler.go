@@ -50,7 +50,7 @@ func Ingreso(c echo.Context) error {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Pass)); err != nil {
 			return c.JSON(401, echo.Map{"mensaje": "Credenciales incorrectas"})
 		} else {
-			return c.JSON(200, echo.Map{"mensaje": "Ingreso"})
+			return c.JSON(200, echo.Map{"user_id": user.ID})
 		}
 	} else {
 		return c.JSON(404, echo.Map{"mensaje": "Usuario no encontrado"})
