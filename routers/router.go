@@ -17,4 +17,7 @@ func RouterPath(e *echo.Echo) {
 	api.POST("/register", h.Registro)
 	api.POST("/login", h.Ingreso)
 
+	//Rutas estadisticas
+	api.GET("/data/:user_id", h.ResumenHoras)
+
 }
