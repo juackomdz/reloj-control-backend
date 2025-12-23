@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/juackomdz/control-asistencia/database"
+	"github.com/juackomdz/control-asistencia/middleware"
 	"github.com/juackomdz/control-asistencia/models"
 	"github.com/labstack/echo/v4"
 )
@@ -50,7 +51,8 @@ func Ingreso(c echo.Context) error {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Pass)); err != nil {
 			return c.JSON(401, echo.Map{"mensaje": "Credenciales incorrectas"})
 		} else {
-			return c.JSON(200, echo.Map{"user_id": user.ID})
+			token := middleware.GeneraJWT(user.Email, uint16(user.ID))
+			return c.JSON(200, echo.Map{"token": token})
 		}
 	} else {
 		return c.JSON(404, echo.Map{"mensaje": "Usuario no encontrado"})
