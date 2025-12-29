@@ -10,7 +10,6 @@ import (
 
 func CheckIn(c echo.Context) error {
 
-	//[x]TODO query que traiga si hay registros sin salida -- if true bloquear
 	var registro models.AsistenciaDTO
 	ahora := time.Now()
 

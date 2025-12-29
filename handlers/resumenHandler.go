@@ -5,11 +5,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Data struct {
-	Data1 string
-	Data2 string
-}
-
 type Result struct {
 	HoraEntrada string `json:"hora_entrada"`
 	HoraSalida  string `json:"hora_salida"`
