@@ -14,7 +14,9 @@ func main() {
 	models.Migrar()
 
 	e := echo.New()
-	e.Use(middleware.CORS())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:5173", "http://localhost:4173"},
+	}))
 	r.RouterPath(e)
 
 	e.GET("/health", func(c echo.Context) error {
