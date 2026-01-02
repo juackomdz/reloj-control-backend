@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/juackomdz/control-asistencia/database"
+	db "github.com/juackomdz/control-asistencia/database"
 	"github.com/juackomdz/control-asistencia/middleware"
 	"github.com/juackomdz/control-asistencia/models"
 	"github.com/labstack/echo/v4"
@@ -19,7 +19,7 @@ func Registro(c echo.Context) error {
 		return c.JSON(500, echo.Map{"mensaje": "Error al recuperar campos"})
 	}
 
-	existe := database.Conectar().Where("email=?", registro.Email).Find(&models.Usuarios{})
+	existe := db.Conectar().Where("email=?", registro.Email).Find(&models.Usuarios{})
 	if existe.RowsAffected == 1 {
 		return c.JSON(400, echo.Map{"mensaje": "Usuario ya existe"})
 	} else {
@@ -29,7 +29,7 @@ func Registro(c echo.Context) error {
 			log.Print(err)
 		}
 
-		database.Conectar().Create(&models.Usuarios{Rut: registro.Rut, NombreCompleto: registro.Nombre, Email: registro.Email, Password: string(hash)})
+		db.Conectar().Create(&models.Usuarios{Rut: registro.Rut, NombreCompleto: registro.Nombre, Email: registro.Email, Password: string(hash)})
 
 		return c.JSON(201, echo.Map{"mensaje": "Registro exitoso"})
 	}
@@ -45,7 +45,7 @@ func Ingreso(c echo.Context) error {
 	}
 
 	var user models.Usuarios
-	row := database.Conectar().Where("email = ?", login.Email).Find(&user)
+	row := db.Conectar().Where("email = ?", login.Email).Find(&user)
 
 	if row.RowsAffected == 1 {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Pass)); err != nil {
