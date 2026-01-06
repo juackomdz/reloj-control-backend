@@ -46,20 +46,11 @@ func MiddleJWT() echo.MiddlewareFunc {
 
 			strToken := strings.TrimSpace(strings.Replace(h, "Bearer", "", 1))
 
-			parsed, errp := jwt.Parse([]byte(strToken), jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
+			_, errp := jwt.Parse([]byte(strToken), jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
 			if errp != nil {
 				log.Print(errp)
-				return c.JSON(401, echo.Map{"mensaje": "Token incorrecto"})
+				return c.JSON(401, echo.Map{"mensaje": "Error con token, generelo nuevamente"})
 			}
-
-			var user uint16
-			var email string
-
-			parsed.Get("user", &user)
-			parsed.Get("email", &email)
-
-			c.Set("user_id", user)
-			c.Set("email", email)
 
 			return next(c)
 		}
