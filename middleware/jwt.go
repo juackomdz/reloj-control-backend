@@ -11,27 +11,79 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
-func GeneraJWT(email string, user uint16) string {
+func GeneraJWT(email string, user uint16) (string, string) {
 
-	token, err := jwt.NewBuilder().
+	tokenA, err := jwt.NewBuilder().
 		Issuer("clubinformatico").
 		IssuedAt(time.Now()).
 		Subject("juackomdz").
 		Claim("user", user).
 		Claim("email", email).
-		Expiration(time.Now().Add(1 * time.Hour)).
+		Expiration(time.Now().Add(15 * time.Minute)).
 		Build()
 
 	if err != nil {
 		log.Print(err)
 	}
 
-	signed, errort := jwt.Sign(token, jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithBase64Encoder(base64.URLEncoding))
+	signedA, errort := jwt.Sign(tokenA, jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithBase64Encoder(base64.URLEncoding))
 	if errort != nil {
 		log.Print(errort)
 	}
 
-	return string(signed)
+	tokenR, errR := jwt.NewBuilder().
+		Issuer("clubinformatico").
+		IssuedAt(time.Now()).
+		Subject("juackomdz").
+		Claim("user", user).
+		Claim("email", email).
+		Expiration(time.Now().Add(24 * time.Hour)).
+		Build()
+
+	if errR != nil {
+		log.Print(errR)
+	}
+
+	signedR, errorR := jwt.Sign(tokenR, jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithBase64Encoder(base64.URLEncoding))
+	if errorR != nil {
+		log.Print(errorR)
+	}
+
+	return string(signedA), string(signedR)
+}
+
+func RefreshToken(token string) (string, error) {
+
+	parsed, errV := jwt.Parse([]byte(token), jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
+	if errV != nil {
+		log.Print(errV)
+	}
+
+	var user interface{}
+	var email string
+
+	parsed.Get("user", &user)
+	parsed.Get("email", &email)
+
+	refresh, err := jwt.NewBuilder().
+		Issuer("clubinformatico").
+		IssuedAt(time.Now()).
+		Subject("juackomdz").
+		Claim("user", user).
+		Claim("email", email).
+		Expiration(time.Now().Add(15 * time.Minute)).
+		Build()
+
+	if err != nil {
+		return "", err
+	}
+
+	signedRefresh, errort := jwt.Sign(refresh, jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithBase64Encoder(base64.URLEncoding))
+	if errort != nil {
+		return "", errort
+	}
+
+	return string(signedRefresh), nil
 }
 
 func MiddleJWT() echo.MiddlewareFunc {

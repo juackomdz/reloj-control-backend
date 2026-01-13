@@ -13,6 +13,7 @@ func RouterPath(e *echo.Echo) {
 	//Rutas acceso
 	api.POST("/register", h.Registro)
 	api.POST("/login", h.Ingreso)
+	api.POST("/refresh", h.Refresh)
 
 	a := api.Group("/auth", m.MiddleJWT())
 	//Rutas asistencia

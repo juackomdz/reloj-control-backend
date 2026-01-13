@@ -51,11 +51,30 @@ func Ingreso(c echo.Context) error {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Pass)); err != nil {
 			return c.JSON(401, echo.Map{"mensaje": "Credenciales incorrectas"})
 		} else {
-			token := middleware.GeneraJWT(user.Email, uint16(user.ID))
-			return c.JSON(200, echo.Map{"token": token})
+			tokenA, tokenR := middleware.GeneraJWT(user.Email, uint16(user.ID))
+			return c.JSON(200, echo.Map{
+				"auth_token":    tokenA,
+				"refresh_token": tokenR,
+			})
 		}
 	} else {
 		return c.JSON(404, echo.Map{"mensaje": "Usuario no encontrado"})
 	}
 
+}
+
+func Refresh(c echo.Context) error {
+
+	h := c.Request().Header.Get("Refresh")
+
+	if len(h) == 0 {
+		return c.JSON(400, echo.Map{"mensaje": "Falta token"})
+	}
+
+	newToken, err := middleware.RefreshToken(h)
+	if err != nil {
+		log.Print(err)
+	}
+
+	return c.JSON(200, echo.Map{"token": newToken})
 }
