@@ -19,7 +19,7 @@ func GeneraJWT(email string, user uint16) (string, string) {
 		Subject("juackomdz").
 		Claim("user", user).
 		Claim("email", email).
-		Expiration(time.Now().Add(15 * time.Minute)).
+		Expiration(time.Now().Add(5 * time.Minute)).
 		Build()
 
 	if err != nil {
@@ -93,7 +93,7 @@ func MiddleJWT() echo.MiddlewareFunc {
 
 			h := c.Request().Header.Get("Authorization")
 			if len(h) == 0 {
-				return c.JSON(401, echo.Map{"mensaje": "Falta token de autorizacion"})
+				return c.JSON(400, echo.Map{"mensaje": "Falta token de autorizacion"})
 			}
 
 			strToken := strings.TrimSpace(strings.Replace(h, "Bearer", "", 1))
