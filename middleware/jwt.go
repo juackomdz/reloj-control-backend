@@ -11,7 +11,7 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
-func GeneraJWT(email string, user uint16) (string, string) {
+func GeneraJWT(email string, user uint16, role string) (string, string) {
 
 	tokenA, err := jwt.NewBuilder().
 		Issuer("clubinformatico").
@@ -19,6 +19,7 @@ func GeneraJWT(email string, user uint16) (string, string) {
 		Subject("juackomdz").
 		Claim("user", user).
 		Claim("email", email).
+		Claim("role", role).
 		Expiration(time.Now().Add(5 * time.Minute)).
 		Build()
 
@@ -37,6 +38,7 @@ func GeneraJWT(email string, user uint16) (string, string) {
 		Subject("juackomdz").
 		Claim("user", user).
 		Claim("email", email).
+		Claim("role", role).
 		Expiration(time.Now().Add(24 * time.Hour)).
 		Build()
 
@@ -61,9 +63,11 @@ func RefreshToken(token string) (string, error) {
 
 	var user interface{}
 	var email string
+	var role string
 
 	parsed.Get("user", &user)
 	parsed.Get("email", &email)
+	parsed.Get("role", &role)
 
 	refresh, err := jwt.NewBuilder().
 		Issuer("clubinformatico").
@@ -71,6 +75,7 @@ func RefreshToken(token string) (string, error) {
 		Subject("juackomdz").
 		Claim("user", user).
 		Claim("email", email).
+		Claim("role", role).
 		Expiration(time.Now().Add(15 * time.Minute)).
 		Build()
 

@@ -29,7 +29,7 @@ func Registro(c echo.Context) error {
 			log.Print(err)
 		}
 
-		db.Conectar().Create(&models.Usuarios{Rut: registro.Rut, NombreCompleto: registro.Nombre, Email: registro.Email, Password: string(hash)})
+		db.Conectar().Create(&models.Usuarios{Rut: registro.Rut, NombreCompleto: registro.Nombre, Email: registro.Email, Password: string(hash), Role: registro.Role})
 
 		return c.JSON(201, echo.Map{"mensaje": "Registro exitoso"})
 	}
@@ -51,7 +51,7 @@ func Ingreso(c echo.Context) error {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Pass)); err != nil {
 			return c.JSON(401, echo.Map{"mensaje": "Credenciales incorrectas"})
 		} else {
-			tokenA, tokenR := middleware.GeneraJWT(user.Email, uint16(user.ID))
+			tokenA, tokenR := middleware.GeneraJWT(user.Email, uint16(user.ID), user.Role)
 			return c.JSON(200, echo.Map{
 				"auth_token":    tokenA,
 				"refresh_token": tokenR,

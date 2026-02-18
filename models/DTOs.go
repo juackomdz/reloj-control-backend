@@ -13,6 +13,7 @@ type RegistroDTO struct {
 	Nombre string `json:"nombre"`
 	Email  string `json:"email"`
 	Pass   string `json:"password"`
+	Role   string `json:"role"`
 }
 
 type LoginDTO struct {
