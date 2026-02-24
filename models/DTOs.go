@@ -20,3 +20,16 @@ type LoginDTO struct {
 	Email string `json:"email"`
 	Pass  string `json:"password"`
 }
+
+type UpdateUserDTO struct {
+	Nombre string `json:"nombre"`
+	Email  string `json:"email"`
+	Pass   string `json:"password"`
+}
+
+type ListUsersDTO struct {
+	Id             uint   `json:"id"`
+	Rut            string `json:"rut"`
+	NombreCompleto string `json:"nombre_completo"`
+	Email          string `json:"email"`
+}

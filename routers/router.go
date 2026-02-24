@@ -15,6 +15,10 @@ func RouterPath(e *echo.Echo) {
 	api.POST("/login", h.Ingreso)
 	api.POST("/refresh", h.Refresh)
 
+	//testing
+	api.PATCH("/users/:user_id", h.Modificar)
+	api.GET("/users", h.Listar)
+
 	a := api.Group("/auth", m.MiddleJWT())
 	//Rutas asistencia
 	a.POST("/check-in", h.CheckIn)
