@@ -5,11 +5,14 @@ import (
 	"os"
 
 	"github.com/glebarez/sqlite"
+	"github.com/juackomdz/control-asistencia/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-func Conectar() *gorm.DB {
+var Dbase *gorm.DB
+
+func init() {
 
 	logger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
@@ -18,12 +21,21 @@ func Conectar() *gorm.DB {
 		},
 	)
 
-	db, err := gorm.Open(sqlite.Open("test1.db"), &gorm.Config{
+	sqliteDb, err := gorm.Open(sqlite.Open("test1.db"), &gorm.Config{
 		Logger: logger,
 	})
 
 	if err != nil {
 		log.Println("No se pudo conectar a la bd: ", err)
 	}
-	return db
+
+	Dbase = sqliteDb
+}
+
+func Conectar() *gorm.DB {
+	return Dbase
+}
+
+func Migrar() {
+	Conectar().AutoMigrate(&models.Usuarios{}, &models.RegistroAsistencias{})
 }

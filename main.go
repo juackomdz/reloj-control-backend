@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/juackomdz/control-asistencia/models"
+	"github.com/juackomdz/control-asistencia/database"
 	r "github.com/juackomdz/control-asistencia/routers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -11,7 +11,8 @@ import (
 
 func main() {
 
-	models.Migrar()
+	database.Conectar()
+	database.Migrar()
 
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	"github.com/juackomdz/control-asistencia/database"
 	"gorm.io/gorm"
 )
 
@@ -22,8 +21,4 @@ type Usuarios struct {
 	Password       string `gorm:"type:varchar(100)"`
 	Role           string `gorm:"type:varchar(15)"`
 	Registros      []RegistroAsistencias
-}
-
-func Migrar() {
-	database.Conectar().AutoMigrate(&Usuarios{}, &RegistroAsistencias{})
 }
