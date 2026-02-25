@@ -4,6 +4,7 @@ go 1.24.7
 
 require (
 	github.com/glebarez/sqlite v1.11.0
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.14.0
 	github.com/lestrrat-go/jwx/v3 v3.0.12
 	golang.org/x/crypto v0.46.0

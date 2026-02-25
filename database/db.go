@@ -12,7 +12,7 @@ import (
 
 var Dbase *gorm.DB
 
-func init() {
+func Conectar() *gorm.DB {
 
 	logger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
@@ -21,7 +21,7 @@ func init() {
 		},
 	)
 
-	sqliteDb, err := gorm.Open(sqlite.Open("test1.db"), &gorm.Config{
+	sqliteDb, err := gorm.Open(sqlite.Open(os.Getenv("BBDD")), &gorm.Config{
 		Logger: logger,
 	})
 
@@ -30,9 +30,7 @@ func init() {
 	}
 
 	Dbase = sqliteDb
-}
 
-func Conectar() *gorm.DB {
 	return Dbase
 }
 

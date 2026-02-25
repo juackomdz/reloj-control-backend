@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/joho/godotenv"
 	"github.com/juackomdz/control-asistencia/database"
 	r "github.com/juackomdz/control-asistencia/routers"
 	"github.com/labstack/echo/v4"
@@ -11,6 +12,11 @@ import (
 
 func main() {
 
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Print(err)
+	}
 	database.Conectar()
 	database.Migrar()
 
