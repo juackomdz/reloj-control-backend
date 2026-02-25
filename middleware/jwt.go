@@ -3,6 +3,7 @@ package middleware
 import (
 	"encoding/base64"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -11,7 +12,12 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
-func GeneraJWT(email string, user uint16, role string) (string, string) {
+const (
+	RoleAdmin = "admin"
+	RoleUser  = "user"
+)
+
+func GenerateJWT(email string, user uint16, role string) (string, string) {
 
 	tokenA, err := jwt.NewBuilder().
 		Issuer("clubinformatico").
@@ -27,7 +33,7 @@ func GeneraJWT(email string, user uint16, role string) (string, string) {
 		log.Print(err)
 	}
 
-	signedA, errort := jwt.Sign(tokenA, jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithBase64Encoder(base64.URLEncoding))
+	signedA, errort := jwt.Sign(tokenA, jwt.WithKey(jwa.HS256(), []byte(os.Getenv("JWT_SECRET"))), jwt.WithBase64Encoder(base64.URLEncoding))
 	if errort != nil {
 		log.Print(errort)
 	}
@@ -46,7 +52,7 @@ func GeneraJWT(email string, user uint16, role string) (string, string) {
 		log.Print(errR)
 	}
 
-	signedR, errorR := jwt.Sign(tokenR, jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithBase64Encoder(base64.URLEncoding))
+	signedR, errorR := jwt.Sign(tokenR, jwt.WithKey(jwa.HS256(), []byte(os.Getenv("JWT_SECRET"))), jwt.WithBase64Encoder(base64.URLEncoding))
 	if errorR != nil {
 		log.Print(errorR)
 	}
@@ -56,7 +62,7 @@ func GeneraJWT(email string, user uint16, role string) (string, string) {
 
 func RefreshToken(token string) (string, error) {
 
-	parsed, errV := jwt.Parse([]byte(token), jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
+	parsed, errV := jwt.Parse([]byte(token), jwt.WithKey(jwa.HS256(), []byte(os.Getenv("JWT_SECRET"))), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
 	if errV != nil {
 		log.Print(errV)
 	}
@@ -83,12 +89,29 @@ func RefreshToken(token string) (string, error) {
 		return "", err
 	}
 
-	signedRefresh, errort := jwt.Sign(refresh, jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithBase64Encoder(base64.URLEncoding))
+	signedRefresh, errort := jwt.Sign(refresh, jwt.WithKey(jwa.HS256(), []byte(os.Getenv("JWT_SECRET"))), jwt.WithBase64Encoder(base64.URLEncoding))
 	if errort != nil {
 		return "", errort
 	}
 
 	return string(signedRefresh), nil
+}
+
+func RequireRole(allowedRoles ...string) echo.MiddlewareFunc {
+
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+
+			role := c.Get("role")
+			for _, r := range allowedRoles {
+				if role == r {
+					return next(c)
+				}
+			}
+
+			return c.JSON(403, echo.Map{"mensaje": "No tienes permisos para este recurso"})
+		}
+	}
 }
 
 func MiddleJWT() echo.MiddlewareFunc {
@@ -103,11 +126,16 @@ func MiddleJWT() echo.MiddlewareFunc {
 
 			strToken := strings.TrimSpace(strings.Replace(h, "Bearer", "", 1))
 
-			_, errp := jwt.Parse([]byte(strToken), jwt.WithKey(jwa.HS256(), []byte("secret")), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
+			parsed, errp := jwt.Parse([]byte(strToken), jwt.WithKey(jwa.HS256(), []byte(os.Getenv("JWT_SECRET"))), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
 			if errp != nil {
 				log.Print(errp)
 				return c.JSON(401, echo.Map{"mensaje": "Error con token, generelo nuevamente"})
 			}
+
+			var role string
+			parsed.Get("role", &role)
+
+			c.Set("role", role)
 
 			return next(c)
 		}

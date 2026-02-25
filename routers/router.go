@@ -11,19 +11,18 @@ func RouterPath(e *echo.Echo) {
 	api := e.Group("/api/v1")
 
 	//Rutas acceso
-	api.POST("/register", h.Registro)
 	api.POST("/login", h.Ingreso)
 	api.POST("/refresh", h.Refresh)
 
-	//testing
-	api.PATCH("/users/:user_id", h.Modificar)
-	api.GET("/users", h.Listar)
+	//Rutas admin
+	api.PATCH("/users/:user_id", h.Modificar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
+	api.GET("/users", h.Listar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
+	api.POST("/register", h.Registro, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
 
-	a := api.Group("/auth", m.MiddleJWT())
-	//Rutas asistencia
-	a.POST("/check-in", h.CheckIn)
-	a.POST("/check-out", h.CheckOut)
+	//Rutas user
+	api.POST("/check-in", h.CheckIn, m.MiddleJWT(), m.RequireRole(m.RoleUser))
+	api.POST("/check-out", h.CheckOut, m.MiddleJWT(), m.RequireRole(m.RoleUser))
 
 	//Rutas estadisticas
-	a.GET("/data/:user_id", h.ResumenHoras)
+	api.GET("/data/:user_id", h.ResumenHoras)
 }
