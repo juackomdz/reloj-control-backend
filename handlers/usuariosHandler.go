@@ -52,7 +52,7 @@ func Ingreso(c echo.Context) error {
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Pass)); err != nil {
 			return c.JSON(401, echo.Map{"mensaje": "Credenciales incorrectas"})
 		} else {
-			tokenA, tokenR := middleware.GenerateJWT(user.Email, uint16(user.ID), user.Role)
+			tokenA, tokenR := middleware.GenerateJWT(user.Email, user.ID, user.Role)
 			return c.JSON(200, echo.Map{
 				"auth_token":    tokenA,
 				"refresh_token": tokenR,

@@ -17,7 +17,7 @@ const (
 	RoleUser  = "user"
 )
 
-func GenerateJWT(email string, user uint16, role string) (string, string) {
+func GenerateJWT(email string, user uint, role string) (string, string) {
 
 	tokenA, err := jwt.NewBuilder().
 		Issuer("clubinformatico").
@@ -67,7 +67,7 @@ func RefreshToken(token string) (string, error) {
 		log.Print(errV)
 	}
 
-	var user interface{}
+	var user float64
 	var email string
 	var role string
 
@@ -79,7 +79,7 @@ func RefreshToken(token string) (string, error) {
 		Issuer("clubinformatico").
 		IssuedAt(time.Now()).
 		Subject("juackomdz").
-		Claim("user", user).
+		Claim("user", uint(user)).
 		Claim("email", email).
 		Claim("role", role).
 		Expiration(time.Now().Add(15 * time.Minute)).
@@ -133,9 +133,13 @@ func MiddleJWT() echo.MiddlewareFunc {
 			}
 
 			var role string
+			var user float64
+
 			parsed.Get("role", &role)
+			parsed.Get("user", &user)
 
 			c.Set("role", role)
+			c.Set("user", uint(user))
 
 			return next(c)
 		}
