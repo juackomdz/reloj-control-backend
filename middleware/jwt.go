@@ -129,7 +129,7 @@ func MiddleJWT() echo.MiddlewareFunc {
 			parsed, errp := jwt.Parse([]byte(strToken), jwt.WithKey(jwa.HS256(), []byte(os.Getenv("JWT_SECRET"))), jwt.WithValidate(true), jwt.WithBase64Encoder(base64.URLEncoding))
 			if errp != nil {
 				log.Print(errp)
-				return c.JSON(401, echo.Map{"mensaje": "Error con token, generelo nuevamente"})
+				return c.JSON(401, echo.Map{"mensaje": "Hubo un error, intentelo nuevamente"})
 			}
 
 			var role string
