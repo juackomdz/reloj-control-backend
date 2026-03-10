@@ -3,21 +3,29 @@ package routers
 import (
 	h "github.com/juackomdz/control-asistencia/handlers"
 	m "github.com/juackomdz/control-asistencia/middleware"
+	"github.com/juackomdz/control-asistencia/repository"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
-func RouterPath(e *echo.Echo) {
+func RouterPath(e *echo.Echo, db *gorm.DB) {
+
+	userRepo := repository.NewUserRepository(db)
+	userHandler := h.NewUserHandler(userRepo)
 
 	api := e.Group("/api/v1")
 
+	//test
+	api.POST("/user", userHandler.Save)
+
 	//Rutas acceso
-	api.POST("/login", h.Ingreso)
-	api.POST("/refresh", h.Refresh)
+	//api.POST("/login", h.Ingreso)
+	//api.POST("/refresh", h.Refresh)
 
 	//Rutas admin
-	api.PATCH("/users/:user_id", h.Modificar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
-	api.GET("/users", h.Listar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
-	api.POST("/register", h.Registro, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
+	//api.PATCH("/users/:user_id", h.Modificar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
+	//api.GET("/users", h.Listar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
+	//api.POST("/register", h.Registro, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
 
 	//Rutas user
 	api.POST("/check-in", h.CheckIn, m.MiddleJWT(), m.RequireRole(m.RoleUser))

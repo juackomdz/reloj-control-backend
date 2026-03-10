@@ -17,14 +17,14 @@ func main() {
 	if err != nil {
 		log.Print(err)
 	}
-	database.Conectar()
-	database.Migrar()
 
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:5173", "http://localhost:4173"},
 	}))
-	r.RouterPath(e)
+
+	r.RouterPath(e, database.Conectar())
+	database.Migrar()
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.JSON(200, echo.Map{"mensaje": "Todo OK"})

@@ -1,17 +1,6 @@
 package models
 
-import (
-	"time"
-
-	"gorm.io/gorm"
-)
-
-type RegistroAsistencias struct {
-	gorm.Model
-	UsuariosID  uint
-	HoraEntrada *time.Time
-	HoraSalida  *time.Time
-}
+import "gorm.io/gorm"
 
 type Usuarios struct {
 	gorm.Model
