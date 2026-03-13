@@ -17,6 +17,7 @@ func RouterPath(e *echo.Echo, db *gorm.DB) {
 
 	//test
 	api.POST("/user", userHandler.Save)
+	api.POST("/test", userHandler.Test)
 
 	//Rutas acceso
 	//api.POST("/login", h.Ingreso)
