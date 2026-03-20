@@ -2,7 +2,6 @@ package routers
 
 import (
 	h "github.com/juackomdz/control-asistencia/handlers"
-	m "github.com/juackomdz/control-asistencia/middleware"
 	"github.com/juackomdz/control-asistencia/repository"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -12,13 +11,17 @@ func RouterPath(e *echo.Echo, db *gorm.DB) {
 
 	userRepo := repository.NewUserRepository(db)
 	userHandler := h.NewUserHandler(userRepo)
+	assistRepo := repository.NewAssistRepository(db)
+	assistHandler := h.NewAssistHandler(assistRepo)
 
 	api := e.Group("/api/v1")
 
 	//test
 	api.POST("/user", userHandler.Save)
-	api.POST("/test", userHandler.Test)
+	api.POST("/test", assistHandler.Test)
 
+	api.POST("/check-in", assistHandler.CheckIn)
+	api.POST("/check-out", assistHandler.CheckOut)
 	//Rutas acceso
 	//api.POST("/login", h.Ingreso)
 	//api.POST("/refresh", h.Refresh)
@@ -29,9 +32,9 @@ func RouterPath(e *echo.Echo, db *gorm.DB) {
 	//api.POST("/register", h.Registro, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
 
 	//Rutas user
-	api.POST("/check-in", h.CheckIn, m.MiddleJWT(), m.RequireRole(m.RoleUser))
-	api.POST("/check-out", h.CheckOut, m.MiddleJWT(), m.RequireRole(m.RoleUser))
+	//api.POST("/check-in", h.CheckIn, m.MiddleJWT(), m.RequireRole(m.RoleUser))
+	//api.POST("/check-out", h.CheckOut, m.MiddleJWT(), m.RequireRole(m.RoleUser))
 
 	//Rutas estadisticas
-	api.GET("/data/:user_id", h.ResumenHoras)
+	//api.GET("/data/:user_id", h.ResumenHoras)
 }

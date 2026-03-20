@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/juackomdz/control-asistencia/models"
 	"github.com/juackomdz/control-asistencia/models/dtos"
 	"github.com/juackomdz/control-asistencia/repository"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserHandler struct {
@@ -22,11 +25,15 @@ func (h *UserHandler) Save(c echo.Context) error {
 		return c.JSON(500, echo.Map{"mensaje": "Datos invalidos"})
 	}
 
+	hash, errHash := bcrypt.GenerateFromPassword([]byte(body.Pass), bcrypt.DefaultCost)
+	if errHash != nil {
+		log.Print(errHash)
+	}
 	data := models.Usuarios{
 		Rut:            body.Rut,
 		NombreCompleto: body.Nombre,
 		Email:          body.Email,
-		Password:       body.Pass,
+		Password:       string(hash),
 		Role:           body.Role,
 	}
 	_, err := h.repo.FindByEmail(body.Email)
@@ -42,6 +49,7 @@ func (h *UserHandler) Save(c echo.Context) error {
 	}
 }
 
+// TODO eliminar metodo test
 func (h *UserHandler) Test(c echo.Context) error {
 
 	var body dtos.LoginDTO
