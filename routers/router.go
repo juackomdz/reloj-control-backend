@@ -22,19 +22,4 @@ func RouterPath(e *echo.Echo, db *gorm.DB) {
 
 	api.POST("/check-in", assistHandler.CheckIn)
 	api.POST("/check-out", assistHandler.CheckOut)
-	//Rutas acceso
-	//api.POST("/login", h.Ingreso)
-	//api.POST("/refresh", h.Refresh)
-
-	//Rutas admin
-	//api.PATCH("/users/:user_id", h.Modificar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
-	//api.GET("/users", h.Listar, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
-	//api.POST("/register", h.Registro, m.MiddleJWT(), m.RequireRole(m.RoleAdmin))
-
-	//Rutas user
-	//api.POST("/check-in", h.CheckIn, m.MiddleJWT(), m.RequireRole(m.RoleUser))
-	//api.POST("/check-out", h.CheckOut, m.MiddleJWT(), m.RequireRole(m.RoleUser))
-
-	//Rutas estadisticas
-	//api.GET("/data/:user_id", h.ResumenHoras)
 }
